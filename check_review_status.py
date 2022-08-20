@@ -57,6 +57,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # main()
-    print(__file__)
-    print(sys.executable)
+    main()
