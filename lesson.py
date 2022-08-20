@@ -6,8 +6,9 @@ from typing import Optional
 import requests
 from crontab import CronTab
 
+CHECK_REVIEW_SCRIPT = 'check_review_status.py'
 REVIEWS_URL = 'https://dvmn.org/reviews/lesson/{lesson_number}/'
-CRON_COMMAND = f'{sys.executable} {os.getcwd()}/check_review_status.py'
+CRON_COMMAND = f'{sys.executable} {os.getcwd()}/{CHECK_REVIEW_SCRIPT}'
 CHECK_INTERVAL = 20  # in minutes
 
 
@@ -66,7 +67,7 @@ class Lesson:
 
     def set_url_from_crontab(self):
         user_crontab = CronTab(user=True)
-        job = next(user_crontab.find_command(f'{CRON_COMMAND} {self.number}'))
+        job = next(user_crontab.find_command(f'{CHECK_REVIEW_SCRIPT} {self.number}'))
         self.url = job.comment
 
     def create_cronjob(self):
