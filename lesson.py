@@ -6,9 +6,11 @@ from typing import Optional
 import requests
 from crontab import CronTab
 
-CHECK_REVIEW_SCRIPT = 'check_review_status.py'
 REVIEWS_URL = 'https://dvmn.org/reviews/lesson/{lesson_number}/'
-CRON_COMMAND = f'{sys.executable} {os.getcwd()}/{CHECK_REVIEW_SCRIPT}'
+CHECK_REVIEW_SCRIPT = 'check_review_status.py'
+executable = sys.executable
+module_dir = executable.partition('venv')[0]
+CRON_COMMAND = f'{executable} {module_dir}/{CHECK_REVIEW_SCRIPT}'
 CHECK_MINUTE_INTERVAL = 20
 
 
