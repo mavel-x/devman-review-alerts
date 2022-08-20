@@ -9,7 +9,7 @@ from crontab import CronTab
 CHECK_REVIEW_SCRIPT = 'check_review_status.py'
 REVIEWS_URL = 'https://dvmn.org/reviews/lesson/{lesson_number}/'
 CRON_COMMAND = f'{sys.executable} {os.getcwd()}/{CHECK_REVIEW_SCRIPT}'
-CHECK_INTERVAL = 20  # in minutes
+CHECK_MINUTE_INTERVAL = 20
 
 
 class Lesson:
@@ -78,7 +78,8 @@ class Lesson:
                 command=f"{CRON_COMMAND} {self.number} {self.attempts}",
                 comment=self.url
             )
-            job.setall(f'*/{CHECK_INTERVAL} 7-23 * * *')
+            job.minute.every(CHECK_MINUTE_INTERVAL)
+            job.hour.during(7, 23)
 
     def remove_cronjob(self):
         with CronTab(user=True) as user_crontab:
