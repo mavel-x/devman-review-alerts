@@ -1,15 +1,17 @@
 import re
 import sys
+from inspect import getsourcefile
+from pathlib import Path
 from typing import Optional
 
 import requests
 from crontab import CronTab
 
-REVIEWS_URL = 'https://dvmn.org/reviews/lesson/{lesson_number}/'
+current_file = Path(getsourcefile(lambda: 0))
+source_dir = Path.resolve(current_file).parent
 CHECK_REVIEW_SCRIPT = 'check_review_status.py'
-executable = sys.executable
-module_dir = executable.partition('venv')[0]
-CRON_COMMAND = f'{executable} {module_dir}/{CHECK_REVIEW_SCRIPT}'
+CRON_COMMAND = f'{sys.executable} {source_dir}/{CHECK_REVIEW_SCRIPT}'
+REVIEWS_URL = 'https://dvmn.org/reviews/lesson/{lesson_number}/'
 CHECK_MINUTE_INTERVAL = 20
 
 
