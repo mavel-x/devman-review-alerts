@@ -1,15 +1,17 @@
 import re
 import sys
+from inspect import getsourcefile
+from pathlib import Path
 from typing import Optional
 
 import requests
 from crontab import CronTab
 
-REVIEWS_URL = 'https://dvmn.org/reviews/lesson/{lesson_number}/'
+current_file = Path(getsourcefile(lambda: 0))
+source_dir = Path.resolve(current_file).parent
 CHECK_REVIEW_SCRIPT = 'check_review_status.py'
-executable = sys.executable
-module_dir = executable.partition('venv')[0]
-CRON_COMMAND = f'{executable} {module_dir}/{CHECK_REVIEW_SCRIPT}'
+CRON_COMMAND = f'{sys.executable} {source_dir}/{CHECK_REVIEW_SCRIPT}'
+REVIEWS_URL = 'https://dvmn.org/reviews/lesson/{lesson_number}/'
 CHECK_MINUTE_INTERVAL = 20
 
 
@@ -39,13 +41,13 @@ class Lesson:
             return
         return match.group().split('/')[-1]
 
-    def __set_number_by_url(self):
+    def __set_lesson_number_by_url(self):
         html = self.__fetch_html()
         self.number = self.__find_number_on_page(html)
 
     def __fetch_reviews(self):
         if self.number is None:
-            self.__set_number_by_url()
+            self.__set_lesson_number_by_url()
         url = REVIEWS_URL.format(lesson_number=self.number)
         response = requests.get(url, cookies=self.user_cookies)
         response.raise_for_status()
@@ -73,7 +75,7 @@ class Lesson:
 
     def create_cronjob(self):
         self.__set_attempt_number()
-        self.__set_number_by_url()
+        self.__set_lesson_number_by_url()
         with CronTab(user=True) as user_crontab:
             job = user_crontab.new(
                 command=f"{CRON_COMMAND} {self.number} {self.attempts}",
