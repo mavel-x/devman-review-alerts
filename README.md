@@ -47,7 +47,7 @@ python3 -m pip install -r requirements.txt
 2. Добавь следующий текст в конце файла:
    ```bash
    # Custom aliases
-   alias devman-alert='/путь/к/проекту/review-alerts/venv/bin/python3 /путь/к/проекту/review-alerts/new_devman_alert.py'
+   alias devman-alert='/путь/к/проекту/review-alerts/venv/bin/python3 /путь/к/проекту/review-alerts/old_new_devman_alert.py'
    ```
 3. Перезапусти терминал, чтобы изменения вступили в силу, 
 или обнови переменные окружения командой:

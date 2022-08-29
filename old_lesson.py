@@ -9,7 +9,7 @@ from crontab import CronTab
 
 current_file = Path(getsourcefile(lambda: 0))
 source_dir = Path.resolve(current_file).parent
-CHECK_REVIEW_SCRIPT = 'check_review_status.py'
+CHECK_REVIEW_SCRIPT = 'old_check_review_status.py'
 CRON_COMMAND = f'{sys.executable} {source_dir}/{CHECK_REVIEW_SCRIPT}'
 REVIEWS_URL = 'https://dvmn.org/reviews/lesson/{lesson_number}/'
 CHECK_MINUTE_INTERVAL = 20
