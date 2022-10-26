@@ -1,7 +1,7 @@
 import logging
 from urllib.parse import urldefrag
 
-from environs import Env
+from environs import Env, EnvError
 from telegram import Update
 from telegram.ext import CallbackContext, CommandHandler, Filters, MessageHandler, Updater
 
@@ -37,7 +37,11 @@ def main():
     env = Env()
     env.read_env()
     tg_token = env('TG_TOKEN')
-    allowed_sender_id = env.int('TG_ALLOWED_SENDER')
+    try:
+        allowed_sender_id = env.int('TG_ALLOWED_SENDER')
+    except EnvError:
+        allowed_sender_id = env.int('TG_USER_ID')
+
     updater = Updater(tg_token)
     dispatcher = updater.dispatcher
     dispatcher.bot_data.update({
