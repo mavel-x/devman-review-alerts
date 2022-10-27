@@ -6,6 +6,8 @@ import requests
 from environs import Env
 from telegram import Bot
 
+logger = logging.getLogger(__name__)
+
 FAIL_MESSAGE = 'По уроку {lesson_url} есть новые улучшения.'
 PASS_MESSAGE = 'Урок {lesson_url} сдан!'
 START_MESSAGES = (
@@ -62,7 +64,6 @@ def check_reviews(devman_token, bot, tg_user):
 
 
 def main():
-    logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO, format='%(asctime)s: %(message)s')
 
     env = Env()
