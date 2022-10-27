@@ -24,15 +24,6 @@ STOP_MESSAGE = ('Скрипт проверки проверок остановл
                 'в проклятом мире, который сами и создали.')
 
 
-def fetch_new_reviews(devman_token, timestamp):
-    url = 'https://dvmn.org/api/long_polling/'
-    headers = {'Authorization': f'Token {devman_token}'}
-    params = {'timestamp': timestamp}
-    response = requests.get(url, headers=headers, params=params)
-    response.raise_for_status()
-    return response.json()
-
-
 def process_reviews(reviews: list) -> str:
     alerts = []
     for review in reviews:
@@ -46,9 +37,14 @@ def process_reviews(reviews: list) -> str:
 
 def check_reviews(devman_token, bot, tg_user):
     timestamp = None
+    url = 'https://dvmn.org/api/long_polling/'
+    headers = {'Authorization': f'Token {devman_token}'}
     while True:
+        params = {'timestamp': timestamp}
         try:
-            response_body = fetch_new_reviews(devman_token, timestamp)
+            response = requests.get(url, headers=headers, params=params)
+            response.raise_for_status()
+            response_body = response.json()
         except requests.exceptions.ReadTimeout:
             continue
         except requests.exceptions.ConnectionError:
