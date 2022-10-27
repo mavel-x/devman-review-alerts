@@ -24,7 +24,7 @@ STOP_MESSAGE = ('Скрипт проверки проверок остановл
                 'в проклятом мире, который сами и создали.')
 
 
-def process_reviews(reviews: list) -> str:
+def format_alert_message(reviews: list) -> str:
     alerts = []
     for review in reviews:
         lesson_url = review['lesson_url']
@@ -55,8 +55,8 @@ def check_reviews(devman_token, bot, tg_user):
             timestamp = response_body['timestamp_to_request']
         else:
             timestamp = response_body['last_attempt_timestamp']
-            alert = process_reviews(response_body['new_attempts'])
-            bot.send_message(chat_id=tg_user, text=alert, disable_web_page_preview=True)
+            alert_message = format_alert_message(response_body['new_attempts'])
+            bot.send_message(chat_id=tg_user, text=alert_message, disable_web_page_preview=True)
 
 
 def main():
