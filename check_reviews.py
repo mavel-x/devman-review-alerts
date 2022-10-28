@@ -5,19 +5,20 @@ import time
 import requests
 from environs import Env
 from telegram import Bot
+from telegram.utils.helpers import escape_markdown
 
 logger = logging.getLogger(__name__)
 
 FAIL_MESSAGE = 'По уроку {lesson_url} есть новые улучшения.'
 PASS_MESSAGE = 'Урок {lesson_url} сдан!'
 START_MESSAGES = (
-    'Готов уведомлять\.',
-    "Проверяю состояние проверок\.",
+    'Готов уведомлять.',
+    "Проверяю состояние проверок.",
     'Спрашиваю "А скоро проверят?"',
-    "Потерпи немножко, почти проверили\.",
+    "Потерпи немножко, почти проверили.",
     "Осталось ждать: `0 минут`",
-    ("Она: Опять о шлюхах своих думает\.\n"
-     "Он: Улучшения мои улучшения\.\.\."),
+    ("Она: Опять о шлюхах своих думает.\n"
+     "Он: Улучшения мои улучшения..."),
 )
 STOP_MESSAGE = ('Скрипт проверки проверок остановлен. Перезапустите скрипт, '
                 'чтобы восстановить течение судьбы, или живите дальше '
@@ -71,7 +72,8 @@ def main():
 
     bot = Bot(tg_token)
 
-    bot.send_message(chat_id=tg_user, text=random.choice(START_MESSAGES), parse_mode='MarkdownV2')
+    start_message = escape_markdown(random.choice(START_MESSAGES), version=2)
+    bot.send_message(chat_id=tg_user, text=start_message, parse_mode='MarkdownV2')
     try:
         check_reviews(devman_token, bot, tg_user)
     finally:
