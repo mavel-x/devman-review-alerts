@@ -44,18 +44,19 @@ def check_reviews(devman_token, bot, tg_user):
         try:
             response = requests.get(url, headers=headers, params=params)
             response.raise_for_status()
-            response_body = response.json()
+            formatted_response = response.json()
         except requests.exceptions.ReadTimeout:
             continue
         except requests.exceptions.ConnectionError:
             time.sleep(30)
             continue
 
-        if response_body['status'] == 'timeout':
-            timestamp = response_body['timestamp_to_request']
+        if formatted_response['status'] == 'timeout':
+            timestamp = formatted_response['timestamp_to_request']
         else:
-            timestamp = response_body['last_attempt_timestamp']
-            alert_message = format_alert_message(response_body['new_attempts'])
+            timestamp = formatted_response['last_attempt_timestamp']
+            reviews = formatted_response['new_attempts']
+            alert_message = format_alert_message(reviews)
             bot.send_message(chat_id=tg_user, text=alert_message, disable_web_page_preview=True)
 
 
