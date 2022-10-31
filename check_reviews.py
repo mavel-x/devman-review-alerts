@@ -24,6 +24,8 @@ STOP_MESSAGE = ('Скрипт проверки проверок остановл
                 'чтобы восстановить течение судьбы, или живите дальше '
                 'в проклятом мире, который сами и создали.')
 
+check_interval_minutes = 10
+
 
 def format_alert_message(reviews: list) -> str:
     alerts = []
@@ -59,6 +61,7 @@ def check_reviews(devman_token, bot, tg_user):
             reviews = review['new_attempts']
             alert_message = format_alert_message(reviews)
             bot.send_message(chat_id=tg_user, text=alert_message, disable_web_page_preview=True)
+        time.sleep(60 * check_interval_minutes)
 
 
 def main():
