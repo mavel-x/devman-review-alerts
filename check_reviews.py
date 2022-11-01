@@ -26,6 +26,18 @@ STOP_MESSAGE = ('Скрипт проверки проверок остановл
 check_interval_minutes = 10
 
 
+class TGLogHandler(logging.Handler):
+
+    def __init__(self, tg_bot: Bot, tg_user: int):
+        self.tg_bot = tg_bot
+        self.tg_user = tg_user
+        super().__init__()
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        self.tg_bot.send_message(chat_id=self.tg_user, text=log_entry)
+
+
 def format_alert_message(reviews: list) -> str:
     alerts = []
     for review in reviews:
@@ -47,11 +59,16 @@ def check_reviews(devman_token, bot, tg_user):
             response = requests.get(url, headers=headers, params=params)
             response.raise_for_status()
             review = response.json()
-        except requests.exceptions.ReadTimeout:
+        except requests.exceptions.ReadTimeout as error:
+            logger.warning(f'Обработана ошибка:\n{error}.')
             continue
-        except requests.exceptions.ConnectionError:
+        except requests.exceptions.ConnectionError as error:
+            logger.warning(f'Обработана ошибка:\n{error}.\nЖду 30 с и продолжаю проверять.')
             time.sleep(30)
             continue
+        except Exception as error:
+            logger.error(f'Бот упал с ошибкой:\n{error}.')
+            raise
 
         if review['status'] == 'timeout':
             timestamp = review['timestamp_to_request']
@@ -73,15 +90,16 @@ def main():
     tg_user = env('TG_USER_ID')
     bot = Bot(tg_token)
 
+    logger.setLevel(logging.WARNING)
+    logger.addHandler(TGLogHandler(bot, tg_user))
+
     start_message = random.choice(START_MESSAGES)
 
     bot.send_message(chat_id=tg_user, text=start_message, parse_mode='HTML')
-    logger.info('Bot started.')
     try:
         check_reviews(devman_token, bot, tg_user)
     finally:
         bot.send_message(chat_id=tg_user, text=STOP_MESSAGE)
-        logger.info('Bot stopped.')
 
 
 if __name__ == "__main__":
