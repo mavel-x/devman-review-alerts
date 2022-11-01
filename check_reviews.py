@@ -5,7 +5,6 @@ import time
 import requests
 from environs import Env
 from telegram import Bot
-from telegram.utils.helpers import escape_markdown
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +15,7 @@ START_MESSAGES = (
     "Проверяю состояние проверок.",
     'Спрашиваю "А скоро проверят?"',
     "Потерпи немножко, почти проверили.",
-    "Осталось ждать: `0 минут`",
+    "Осталось ждать: <code>0 минут</code>",
     ("Она: Опять о шлюхах своих думает.\n"
      "Он: Улучшения мои улучшения..."),
 )
@@ -72,11 +71,11 @@ def main():
     tg_token = env('TG_TOKEN')
     devman_token = env('DEVMAN_TOKEN')
     tg_user = env('TG_USER_ID')
-
     bot = Bot(tg_token)
 
-    start_message = escape_markdown(random.choice(START_MESSAGES), version=2)
-    bot.send_message(chat_id=tg_user, text=start_message, parse_mode='MarkdownV2')
+    start_message = random.choice(START_MESSAGES)
+
+    bot.send_message(chat_id=tg_user, text=start_message, parse_mode='HTML')
     try:
         check_reviews(devman_token, bot, tg_user)
     finally:
