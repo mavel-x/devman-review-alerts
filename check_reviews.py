@@ -64,7 +64,7 @@ def check_reviews(devman_token, bot, tg_user):
 
 
 def main():
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s: %(message)s')
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s: %(filename)s: %(message)s')
 
     env = Env()
     env.read_env()
@@ -76,10 +76,12 @@ def main():
     start_message = random.choice(START_MESSAGES)
 
     bot.send_message(chat_id=tg_user, text=start_message, parse_mode='HTML')
+    logger.info('Bot started.')
     try:
         check_reviews(devman_token, bot, tg_user)
     finally:
         bot.send_message(chat_id=tg_user, text=STOP_MESSAGE)
+        logger.info('Bot stopped.')
 
 
 if __name__ == "__main__":
