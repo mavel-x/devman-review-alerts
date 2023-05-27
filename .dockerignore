@@ -1,0 +1,8 @@
+venv
+.env
+.env.sample
+.gitattributes
+.gitignore
+Procfile
+README.md
+LICENSE
